@@ -1,0 +1,21 @@
+{
+  "name": "精研 見積作成",
+  "short_name": "見積作成",
+  "description": "株式会社精研 業務用 見積作成アプリ",
+  "start_url": "./TEST-7_10.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
