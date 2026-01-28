@@ -1010,6 +1010,14 @@
       }
 
       pdf.save(buildSaveFileName() + '.pdf');
+      
+      // 見積情報を取得
+      const filename = buildSaveFileName() + '.pdf';
+      const estimateNumber = (document.getElementById('quoteNo').value || '').trim();
+      const customerName = getCustomerNameForFile();
+      const validUntil = document.getElementById('issueDate').value || '';
+      const createdBy = document.getElementById('tantouSelect').value || '';
+      
       // 見積作成通知をサーバーに送信
         const notifyData = {
             api_key: 'seiken-estimate_2026_key_01271315',
