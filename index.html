@@ -1010,6 +1010,34 @@
       }
 
       pdf.save(buildSaveFileName() + '.pdf');
+      // 見積作成通知をサーバーに送信
+        const notifyData = {
+            api_key: 'seiken-estimate_2026_key_01271315',
+            estimate_no: estimateNumber,
+            customer: customerName,
+            valid_until: validUntil,
+            created_by: createdBy,
+            pdf_name: filename
+        };
+
+        fetch('https://daihiguchi.art/notify.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-KEY': 'seiken-estimate_2026_key_01271315'
+            },
+            body: JSON.stringify(notifyData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('✅ 見積作成通知送信成功:', data);
+            if (data.ok && data.mail_sent) {
+                console.log('📧 メール送信成功:', data.mail_to);
+            }
+        })
+        .catch(error => {
+            console.error('❌ 通知送信エラー:', error);
+        });
     }finally{
       document.body.classList.remove('pdf-mode');
     }
