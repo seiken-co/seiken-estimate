@@ -962,94 +962,66 @@
 
 
   
+  
   async function downloadPDF(){
-    // html2canvas + jsPDF でPDFを生成（長文は自動で複数ページ）
-    if(!window.html2canvas || !window.jspdf){
-      alert('PDF生成（ダウンロード）はネット接続が必要です。\n「印刷」をご利用ください。');
-      return;
-    }
-
+    // ✅ テキストPDF（選択できる文字）で出力するため、ブラウザの印刷エンジンを使用します。
+    // 「印刷」ダイアログで「PDFに保存」を選択してください。
     applyAndRender();
 
-    // ★PDF生成時も「印刷と同じレイアウト/改ページ」に寄せる
+    // ★印刷と同じレイアウト/改ページに寄せる
     document.body.classList.add('pdf-mode');
 
+    // Chrome等では document.title が保存時のファイル名候補になります
+    const _origTitle = document.title;
+    const _newTitle  = buildSaveFileName();
+
     try{
-      // レイアウト反映を1フレーム待つ
-      await new Promise(requestAnimationFrame);
+      document.title = _newTitle;
 
-      const el = document.getElementById('paper');
-      const canvas = await window.html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      });
-      const imgData = canvas.toDataURL('image/png');
-
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-      const pageW = 210;
-      const pageH = 297;
-
-      const imgW = pageW;
-      const imgH = canvas.height * (imgW / canvas.width);
-
-      if(imgH <= pageH){
-        pdf.addImage(imgData, 'PNG', 0, 0, imgW, imgH);
-      }else{
-        // 1枚の長い画像をA4高さごとに切り出してページ追加
-        let y = 0;
-        let remaining = imgH;
-        while(remaining > 0){
-          pdf.addImage(imgData, 'PNG', 0, -y, imgW, imgH);
-          remaining -= pageH;
-          y += pageH;
-          if(remaining > 0) pdf.addPage();
-        }
-      }
-
-      pdf.save(buildSaveFileName() + '.pdf');
-      
       // 見積情報を取得
       const filename = buildSaveFileName() + '.pdf';
       const estimateNumber = (document.getElementById('quoteNo').value || '').trim();
       const customerName = getCustomerNameForFile();
       const validUntil = document.getElementById('issueDate').value || '';
       const createdBy = document.getElementById('tantouSelect').value || '';
-      
-      // 見積作成通知をサーバーに送信
-        const notifyData = {
-            api_key: 'seiken-estimate_2026_key_01271315',
-            estimate_no: estimateNumber,
-            customer: customerName,
-            valid_until: validUntil,
-            created_by: createdBy,
-            pdf_name: filename
-        };
 
-        fetch('https://daihiguchi.art/notify.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-API-KEY': 'seiken-estimate_2026_key_01271315'
-            },
-            body: JSON.stringify(notifyData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('✅ 見積作成通知送信成功:', data);
-            if (data.ok && data.mail_sent) {
-                console.log('📧 メール送信成功:', data.mail_to);
-            }
-        })
-        .catch(error => {
-            console.error('❌ 通知送信エラー:', error);
-        });
+      // 見積作成通知をサーバーに送信（従来ロジックを維持）
+      const notifyData = {
+        api_key: 'seiken-estimate_2026_key_01271315',
+        estimate_no: estimateNumber,
+        customer: customerName,
+        valid_until: validUntil,
+        created_by: createdBy,
+        pdf_name: filename
+      };
+
+      fetch('https://daihiguchi.art/notify.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': 'seiken-estimate_2026_key_01271315'
+        },
+        body: JSON.stringify(notifyData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('✅ 見積作成通知送信成功:', data);
+        if (data.ok && data.mail_sent) {
+          console.log('📧 メール送信成功:', data.mail_to);
+        }
+      })
+      .catch(error => {
+        console.error('❌ 通知送信エラー:', error);
+      });
+
+      // テキストPDF出力（ユーザー操作で保存）
+      window.print();
     }finally{
+      document.title = _origTitle;
       document.body.classList.remove('pdf-mode');
     }
   }
+
 
 
   function printPage(){
