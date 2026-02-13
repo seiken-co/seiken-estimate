@@ -10,12 +10,6 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>精研 見積もり</title>
-<!-- PDFダウンロード（任意） -->
-<script defer="" src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<!-- PDFダウンロード（任意） -->
-<script defer="" src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <style>
     :root{
       --border:#333;
@@ -323,6 +317,11 @@
       font-size: 12px;
       font-weight: 700;
     }
+    .no2{
+      font-size: 10px;
+      font-weight: 500;
+      margin-top: 1mm;
+    }
     .title{
       text-align:center;
       font-size: 22px;
@@ -385,16 +384,15 @@
       font-weight: 700;
     }
 
-    .inkan{
-      position:absolute;
-      right: 5mm;
-      top: 5mm;
-      width: 18mm;
-      height: auto;
-      opacity: 0.95;
-    }
+    
 
-    .greeting{
+    .seiken-stamp {
+      display: block;
+      width: 58mm;
+      height: auto;
+      margin-bottom: 3mm;
+    }
+.greeting{
       margin-top: 4mm;
       font-size: 12px;
       font-weight: 700;
@@ -511,6 +509,12 @@
       margin-bottom: 1mm;
     }
   </style>
+<script>
+  // SEID採番API設定
+  window.SEID_API_ENDPOINT = 'https://daihiguchi.art/estimate-system/api/quote/create.php';
+  window.SEID_API_KEY = 'seiken-estimate_2026_key_01271315';
+</script>
+
 </head>
 <body>
 <div class="no-print">
@@ -531,10 +535,11 @@
 <div class="section-head"><div class="opt-head">基本情報</div><button class="btn mini" onclick="resetBasicInfoSection()" type="button">この欄をリセット</button></div>
 <div class="grid">
 <div>
-<label>見積番号（自動生成）</label>
-<input id="quoteNo" oninput="quoteNoManuallyEdited=true; applyAndRender()" placeholder="例：DH-TMAR-K1502C-20260114-153045" type="text"/>
+<label>見積番号（SEID）</label>
+<input id="seidNo" oninput="seidManuallyEdited=true; seidLocked=false; this.readOnly=false; applyAndRender()" placeholder="例：SEID-0001" type="text"/>
+<button class="btn mini" type="button" onclick="requestSEID(true)" style="margin-top:6px">SEID再取得</button>
 <div class="muted" style="margin-top:6px">
-              形式：担当者イニシャル-モデル名-日付-時刻（手入力可）
+              形式：SEID-0001（サーバー発番・手入力は非推奨）
             </div>
 </div>
 <div>
@@ -542,6 +547,17 @@
 <input id="issueDate" onchange="onIssueDateChange()" type="date"/>
 </div>
 </div>
+
+<div class="grid" style="margin-top:10px">
+  <div>
+    <label>管理番号（自動生成）</label>
+    <input id="quoteNo" oninput="quoteNoManuallyEdited=true; applyAndRender()" placeholder="例：DH-TMAR-K1502C-20260114-153045" type="text"/>
+    <button class="btn mini" type="button" onclick="regenQuoteNo()" style="margin-top:6px">管理番号 再生成</button>
+    <div class="muted" style="margin-top:6px">形式：担当者イニシャル-モデル名-日付-時刻（手入力可）</div>
+  </div>
+  <div></div>
+</div>
+
 <div class="row" style="margin-top:10px">
 <div style="flex:1">
 <label>宛名（会社名等）</label>
@@ -606,7 +622,7 @@
 </div>
 <div style="flex:1">
 <label>番地・建物名（手入力）</label>
-<input id="addr2" oninput="applyAndRender()" placeholder="例：3-12-3 ○○ビル2F" type="text"/>
+<input id="addr2" oninput="applyAndRender()" placeholder="例：3-12-3 ○○ビル２F" type="text"/>
 </div>
 </div>
 <div class="row" style="margin-top:10px">
@@ -622,7 +638,7 @@
 <div class="row" style="margin-top:10px">
 <div style="flex:1">
 <label>備考（自由記入）</label>
-<textarea id="notes" oninput="applyAndRender()" placeholder="例：本見積書の有効期限は30日です。有効期限が切れた場合は、再見積となります。"></textarea>
+<textarea id="notes" oninput="applyAndRender()" placeholder="特記事項がある場合はこちらに記入してください"></textarea>
 </div>
 </div>
 </div>
@@ -754,7 +770,7 @@
 <div class="print-area">
 <div class="paper" id="paper">
 <div class="header">
-<div class="no" id="outNo">No.--MODEL----------</div>
+<div class="no" id="outNo">No.SEID-____</div>
 <div class="title">御 見 積 書</div>
 <div class="date" id="outDate">令和 -- 年 -- 月 -- 日</div>
 </div>
@@ -763,9 +779,10 @@
 <div class="to-name" id="outTo">株式会社　＿＿＿＿　御中</div>
 </div>
 <div class="issuer">
-<img alt="会社印" class="inkan" src="inkan.png"/>
+  <!-- ロゴ＋印鑑 -->
+  <img src="seiken-stamp.png" class="seiken-stamp" alt="株式会社精研 印影">
+
 <div class="issuer-text">
-<div class="issuer-name">株式会社 精研</div>
 <div class="rowline"><div class="k">〒</div><div class="v">573-0102</div></div>
 <div class="rowline"><div class="k"></div><div class="v">大阪府枚方市長尾家具町3-12-3</div></div>
 <div class="rowline"><div class="k">TEL</div><div class="v">072-856-8253</div></div>
@@ -834,8 +851,101 @@
     '八田雅隆': 'MH'
   };
 
+  // ====================
+  // SEID 発番（サーバーAPI連携）
+  // ====================
+  // ※GitHub Pagesから呼ぶ場合は、API側でCORS許可が必要です。
+  // 例: https://www.seiken-kagu8.co.jp/estimate-system/api/quote/create.php
+  const SEID_API_ENDPOINT = window.SEID_API_ENDPOINT || ''; // 空ならローカル暫定ID
+  const SEID_API_KEY = window.SEID_API_KEY || '';           // X-API-KEY
+
+  async function requestSEID(force){
+    const q = document.getElementById('seidNo');
+    if(!force && seidLocked && /^SEID-\d{4,}$/.test((q.value||'').trim())) return;
+
+    // API未設定の場合は空欄＋警告
+    if(!SEID_API_ENDPOINT || !SEID_API_KEY){
+      q.value = '';
+      seidLocked = false;
+      q.readOnly = false;
+      seidManuallyEdited = false;
+      applyAndRender();
+      alert('SEID番号取得API未設定。\nAPIエンドポイントとAPIキーを設定してください。');
+      return;
+    }
+
+    try{
+      // create.php が期待する形式でペイロード構築
+      const machine = getSelectedMachine();
+
+        // 有効期限：今日+30日（YYYY-MM-DD）
+　　　const d = new Date();
+　　　d.setDate(d.getDate() + 30);
+　　　const yyyy = d.getFullYear();
+　　　const mm = String(d.getMonth() + 1).padStart(2, '0');
+　　　const dd = String(d.getDate()).padStart(2, '0');
+　　　const expiresYmd = `${yyyy}-${mm}-${dd}`;
+        
+   　const payload = {
+  　　api_key: SEID_API_KEY,
+　　　expires_at: expiresYmd, 
+
+
+        staff: (document.getElementById('tantouSelect')?.value || '').trim() || '未設定',
+        customer: (document.getElementById('toBase')?.value || '').trim() || '顧客名未入力',
+        machine: machine?.name || '',
+        product_code: machine?.category || '',
+        total: 0,  // 見積合計は後で計算されるため、ここでは0
+        admin_quote_no: (document.getElementById('quoteNo')?.value || '').trim(),
+        data: {
+          // 最小限のデータ（将来拡張用）
+          created_at: new Date().toISOString(),
+          machine_category: machine?.category || '',
+          machine_name: machine?.name || ''
+        }
+      };
+
+      const res = await fetch(SEID_API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': SEID_API_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if(!res.ok){
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await res.json().catch(()=> ({}));
+
+      // 返却キーは実装差異に耐える（seid / quote_no / quoteNo / id など）
+      const seid = (data.seid || data.quote_no || data.quoteNo || data.id || data.quote_id || '').toString().trim();
+
+      if(!/^SEID-\d{4,}$/.test(seid)){
+        throw new Error('Invalid SEID response');
+      }
+
+      q.value = seid;
+      seidLocked = true;
+      q.readOnly = true;
+      seidManuallyEdited = false;
+      applyAndRender();
+    }catch(e){
+      // 失敗時は空欄＋警告（業務継続優先）
+      q.value = '';
+      seidLocked = false; // API失敗なのでロックしない（後で再取得できるように）
+      q.readOnly = false;
+      applyAndRender();
+      console.warn('SEID request failed:', e);
+      alert(`SEID番号の取得に失敗しました。\n\nエラー: ${e.message}\n\n再度「SEID再取得」ボタンをクリックしてください。`);
+    }
+  }
+
   // 見積番号を手動編集したら、以後は担当者変更で上書きしない
-  let quoteNoManuallyEdited = false;
+  let seidManuallyEdited = false;
+  let seidLocked = false; // SEIDが確定したら true（自動上書き防止）
+  let quoteNoManuallyEdited = false; // 管理番号（旧見積番号）
 
   function pad2(n){ return String(n).padStart(2,'0'); }
 
@@ -954,68 +1064,76 @@
   }
 
   function buildSaveFileName(){
+    const seid = (document.getElementById('seidNo').value || '').trim() || 'SEID-____';
     const quote = (document.getElementById('quoteNo').value || '').trim() || `--${getMachineCodeForQuoteNo() || DEFAULT_MACHINE_CODE}----------`;
     const customer = getCustomerNameForFile();
-    const parts = [quote, customer].filter(p => (p || '').trim() !== '');
+    const parts = [seid, quote, customer].filter(p => (p || '').trim() !== '');
     return makeSafeFilePart(parts.join('_'));
   }
 
 
   
   async function downloadPDF(){
-    // テキストPDF化：ブラウザの印刷エンジンで「PDFに保存」を使う（html2canvas/jsPDFは使わない）
+    // テキストPDF（ブラウザのPDF保存）で出力する：
+    // 画像化（html2canvas/jsPDF）は使わず、印刷エンジンに任せることで
+    // 文字選択できるPDFになり、容量も軽くなります。
+    
     applyAndRender();
 
-    // 印刷と同じレイアウトに寄せる（画面側の操作UIを隠す）
-    document.body.classList.add('pdf-mode');
-
-    // 保存ファイル名候補（環境により反映されない場合あり）
+    const fileName = buildSaveFileName();
     const prevTitle = document.title;
-    const filenameBase = buildSaveFileName();
-    document.title = filenameBase;
 
-    try{
-      // レイアウト反映を1フレーム待つ
-      await new Promise(requestAnimationFrame);
+    document.body.classList.add('pdf-mode');
+    document.title = fileName;
 
-      // 印刷ダイアログ → 「PDFに保存」でテキストPDFになります
-      window.print();
+    const cleanup = () => {
+      document.title = prevTitle;
+      document.body.classList.remove('pdf-mode');
+    };
 
-      // 見積作成通知（従来どおり）
-      const filename = filenameBase + '.pdf';
-      const estimateNumber = (document.getElementById('quoteNo').value || '').trim();
+    window.addEventListener('afterprint', cleanup, { once:true });
+
+    // ここで「PDFに保存」を選択して保存してください（Windows/Chrome/Edge）
+    window.print();
+    
+    // 見積作成通知をサーバーに送信（印刷ダイアログ起動後、バックグラウンドで実行）
+    try {
+      const filename = fileName + '.pdf';
+      const estimateNumber = (document.getElementById('seidNo').value || '').trim();
+      const managementNumber = (document.getElementById('quoteNo').value || '').trim();
       const customerName = getCustomerNameForFile();
       const validUntil = document.getElementById('issueDate').value || '';
       const createdBy = document.getElementById('tantouSelect').value || '';
-
+      
       const notifyData = {
-        api_key: 'seiken-estimate_2026_key_01271315',
-        estimate_no: estimateNumber,
-        customer: customerName,
-        valid_until: validUntil,
-        created_by: createdBy,
-        pdf_name: filename
+          api_key: 'seiken-estimate_2026_key_01271315',
+          estimate_no: estimateNumber,
+          customer: customerName,
+          valid_until: validUntil,
+          created_by: createdBy,
+          pdf_name: filename
       };
 
       fetch('https://daihiguchi.art/notify.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-KEY': 'seiken-estimate_2026_key_01271315'
-        },
-        body: JSON.stringify(notifyData)
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': 'seiken-estimate_2026_key_01271315'
+          },
+          body: JSON.stringify(notifyData)
       })
-      .then(r => r.json())
+      .then(response => response.json())
       .then(data => {
-        console.log('✅ 見積作成通知送信成功:', data);
-        if (data.ok && data.mail_sent) console.log('📧 メール送信成功:', data.mail_to);
+          console.log('✅ 見積作成通知送信成功:', data);
+          if (data.ok && data.mail_sent) {
+              console.log('📧 メール送信成功:', data.mail_to);
+          }
       })
-      .catch(err => console.error('❌ 通知送信エラー:', err));
-
-    }finally{
-      // 画面復帰
-      document.title = prevTitle;
-      document.body.classList.remove('pdf-mode');
+      .catch(error => {
+          console.error('❌ 通知送信エラー:', error);
+      });
+    } catch(error) {
+      console.error('❌ 通知処理エラー:', error);
     }
   }
 
@@ -1050,6 +1168,7 @@
     { id:'sai_pocket_clamp', name:'ポケット用クランプ枠：65×100', price:22000 },
     { id:'sai_sock_frame', name:'靴下枠：袋物枠用', price:18000 },
     { id:'sai_sock_gauge', name:'靴下枠用ゲージ：単品', price:5130 },
+    { id:'sai_marusho_sock_set', name:'丸正靴下枠セット ゲージ付き', price:39000 },
     { id:'sai_m_frame_kit', name:'Mフレームスターターキッド：彩', price:71000 },
     { id:'sai_m_clip_50', name:'Mクリップ：50', price:4000 },
     { id:'sai_m_clip_100', name:'Mクリップ：100', price:6000 },
@@ -1936,9 +2055,11 @@
   }
 
   function updateQuoteNoIfAuto(){
-    if(typeof quoteNoManuallyEdited === 'undefined') return;
+    // 機種変更・針数変更などで「管理番号（旧見積番号）」を自動生成している場合は追従更新する。
+    // 手入力（編集）している場合は上書きしない。
+    const q = document.getElementById('quoteNo');
+    if(!q) return;
     if(!quoteNoManuallyEdited){
-      const q = document.getElementById('quoteNo');
       q.value = generateQuoteNoNow();
     }
   }
@@ -3018,6 +3139,7 @@ function addTradeInOption(container) {
     // 刺繍ソフト（DG）サマリー更新
     updateDGSummary();
 
+    const seidNo = (document.getElementById('seidNo').value || '').trim() || 'SEID-____';
     const quoteNo = (document.getElementById('quoteNo').value || '').trim() || `--${getMachineCodeForQuoteNo() || DEFAULT_MACHINE_CODE}----------`;
     const issueDate = document.getElementById('issueDate').value;
 
@@ -3030,7 +3152,7 @@ function addTradeInOption(container) {
     const tantou = document.getElementById('tantouSelect').value;
 
     document.getElementById('outTo').textContent = buildToText();
-    document.getElementById('outNo').textContent = `No.${quoteNo}`;
+    document.getElementById('outNo').textContent = `No.${seidNo}`;
     document.getElementById('outDate').textContent = formatReiwa(issueDate);
 
     document.getElementById('outDelivery').textContent = delivery;
@@ -3212,8 +3334,9 @@ function addTradeInOption(container) {
     document.getElementById('notes').value = '';
 
     // 見積番号：リセット時は自動生成にする
-    quoteNoManuallyEdited = false;
-    document.getElementById('quoteNo').value = generateQuoteNoNow();
+    seidManuallyEdited = false;
+    document.getElementById('quoteNo').value = '';
+    requestSEID(false);
 
     applyAndRender();
   }
@@ -3325,8 +3448,11 @@ updateOptionsList();
     // 刺繍ソフト（DG）
     initDGSoftwareUI();
 
-    // 初回見積番号生成
+    // 初回：管理番号（旧見積番号）を自動生成
     document.getElementById('quoteNo').value = generateQuoteNoNow();
+    // 初回：SEIDを取得（API未設定なら暫定ID）
+    document.getElementById('seidNo').value = '';
+    requestSEID(false);
 
     applyAndRender();
   });
