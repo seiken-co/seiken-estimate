@@ -537,7 +537,7 @@
 <div>
 <label>見積番号（SEID）</label>
 <input id="seidNo" oninput="seidManuallyEdited=true; seidLocked=false; this.readOnly=false; applyAndRender()" placeholder="例：SEID-0001" type="text"/>
-<button class="btn mini" type="button" onclick="requestSEID(true)" style="margin-top:6px">SEID再取得</button>
+<button class="btn mini primary" type="button" onclick="requestSEID(true)" style="margin-top:6px">OK（SEID採番）</button>
 <div class="muted" style="margin-top:6px">
               形式：SEID-0001（サーバー発番・手入力は非推奨）
             </div>
@@ -863,6 +863,21 @@
     const q = document.getElementById('seidNo');
     if(!force && seidLocked && /^SEID-\d{4,}$/.test((q.value||'').trim())) return;
 
+    // ★追加：顧客名と担当者が入力されているかチェック
+    const staffVal = (document.getElementById('tantouSelect')?.value || '').trim();
+    const customerVal = (document.getElementById('toBase')?.value || '').trim();
+
+    if (!staffVal || !customerVal) {
+      if(!staffVal && !customerVal){
+        alert('SEID番号を採番するには、「宛先（会社名）」と「担当者」を先に入力してください。');
+      } else if(!customerVal){
+        alert('SEID番号を採番するには、「宛先（会社名）」を先に入力してください。');
+      } else {
+        alert('SEID番号を採番するには、「担当者」を先に入力してください。');
+      }
+      return;
+    }
+
     // API未設定の場合は空欄＋警告
     if(!SEID_API_ENDPOINT || !SEID_API_KEY){
       q.value = '';
@@ -891,8 +906,8 @@
 　　　expires_at: expiresYmd, 
 
 
-        staff: (document.getElementById('tantouSelect')?.value || '').trim() || '未設定',
-        customer: (document.getElementById('toBase')?.value || '').trim() || '顧客名未入力',
+        staff: staffVal,
+        customer: customerVal,
         machine: machine?.name || '',
         product_code: machine?.category || '',
         total: 0,  // 見積合計は後で計算されるため、ここでは0
@@ -938,7 +953,7 @@
       q.readOnly = false;
       applyAndRender();
       console.warn('SEID request failed:', e);
-      alert(`SEID番号の取得に失敗しました。\n\nエラー: ${e.message}\n\n再度「SEID再取得」ボタンをクリックしてください。`);
+      alert(`SEID番号の取得に失敗しました。\n\nエラー: ${e.message}\n\n再度「OK（SEID採番）」ボタンをクリックしてください。`);
     }
   }
 
@@ -3450,9 +3465,8 @@ updateOptionsList();
 
     // 初回：管理番号（旧見積番号）を自動生成
     document.getElementById('quoteNo').value = generateQuoteNoNow();
-    // 初回：SEIDを取得（API未設定なら暫定ID）
+    // SEID番号は空欄のまま（ユーザーが「OK（SEID採番）」ボタンを押して採番）
     document.getElementById('seidNo').value = '';
-    requestSEID(false);
 
     applyAndRender();
   });
