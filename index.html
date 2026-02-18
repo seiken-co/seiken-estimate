@@ -521,7 +521,7 @@
 <div class="app-head">
 <div>
 <div class="app-title">精研 見積もり（彩・単頭機・少数頭機）</div>
-<div class="app-sub">TEST-7_1 - 彩統合版</div>
+<div class="app-sub">ver.11-3 - 彩統合版</div>
 </div>
 </div>
 <div class="toolbar">
@@ -537,7 +537,7 @@
 <div>
 <label>見積番号（SEID）</label>
 <input id="seidNo" oninput="seidManuallyEdited=true; seidLocked=false; this.readOnly=false; applyAndRender()" placeholder="例：SEID-0001" type="text"/>
-<button class="btn mini primary" type="button" onclick="requestSEID(true)" style="margin-top:6px">OK（SEID採番）</button>
+<button class="btn mini primary" type="button" onclick="requestSEID(true)" style="margin-top:6px">次の番号</button>
 <div class="muted" style="margin-top:6px">
               形式：SEID-0001（サーバー発番・手入力は非推奨）
             </div>
@@ -953,7 +953,7 @@
       q.readOnly = false;
       applyAndRender();
       console.warn('SEID request failed:', e);
-      alert(`SEID番号の取得に失敗しました。\n\nエラー: ${e.message}\n\n再度「OK（SEID採番）」ボタンをクリックしてください。`);
+      alert(`SEID番号の取得に失敗しました。\n\nエラー: ${e.message}\n\n再度「次の番号」ボタンをクリックしてください。`);
     }
   }
 
@@ -3465,7 +3465,7 @@ updateOptionsList();
 
     // 初回：管理番号（旧見積番号）を自動生成
     document.getElementById('quoteNo').value = generateQuoteNoNow();
-    // SEID番号は空欄のまま（ユーザーが「OK（SEID採番）」ボタンを押して採番）
+    // SEID番号は空欄のまま（ユーザーが「次の番号」ボタンを押して採番）
     document.getElementById('seidNo').value = '';
 
     applyAndRender();
