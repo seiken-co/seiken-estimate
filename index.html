@@ -520,7 +520,7 @@
 <div class="no-print">
 <div class="app-head">
 <div>
-<div class="app-title">精研 見積もり（彩・単頭機・少数頭機）</div>
+<div class="app-title">精研 見積もり（彩・単頭機・BP2-XC・少数頭機）</div>
 <div class="app-sub">ver.11-3 - 彩統合版</div>
 </div>
 </div>
@@ -1165,6 +1165,7 @@
     { id:'TMEZ-S',  label:'TMEZ-S',  needles:[9,12,15], displayName:'タジマ 1頭式刺繍機 i-TM/DCP 搭載モデル' },
     { id:'TMBR2-S', label:'TMBR2-S', needles:[6,12,15,18], displayName:'タジマ 1頭式刺繍機 DCP搭載モデル' },
     { id:'TMBP2-S', label:'TMBP2-S', needles:[6,12,15], displayName:'タジマ 1頭式刺繍機 標準モデル' },
+    { id:'TMBP2-XC', label:'TMBP2-XC', needles:[12,15], field:'550x600', displayName:'タジマ 1頭式刺繍機 大型モデル（TMBP2-XC）' },
   ];
 
   // 彩（SAI）マスタ（固定）
@@ -1270,6 +1271,11 @@
     'SINGLE': {
       'BFF3+BFF8': 46000,
       'BFF2+BFF4': 49000
+    },
+    // TMBP2-XC専用（専用卓付き）
+    'TMBP2-XC': {
+      'BFF3+BFF8': 107200,
+      'BFF2+BFF4': 107200
     }
   };
 
@@ -1306,17 +1312,17 @@
   const FIXED_OPTIONS = [
     // 単頭機専用（表示順）
     { id: 'bagTable', name: '袋物枠用テーブル', price: 31000, models: ['single'], order: 3 },
-    { id: 'leg', name: '脚', price: 58000, models: ['single'], order: 4 },
+    { id: 'leg', name: '脚', price: 58000, priceByModelId: {'TMBP2-XC': 71000}, models: ['single'], order: 4 },
     { id: 'legTray', name: '脚トレイ', price: 8000, models: ['single'], order: 5 },
     { id: 'positionMarker', name: 'ポジションマーカー 1H', price: 8000, models: ['single', 'few'], order: 7 },
     { id: 'bobbinWinder', name: '下糸巻装置', price: 28000, models: ['single', 'few'], order: 8 },
     { id: 'laserMarker', name: 'レーザークロスマーカー', price: 15000, models: ['single'], order: 9 },
-    { id: 'sockFrameSet', name: '単頭機用 タジマ靴下枠セット ゲージ付き', price: 23000, models: ['single'], order: 10 },
-    { id: 'sockFrameSetMarusiki', name: '単頭機用 丸正式靴下枠セット ゲージ付き', price: 39000, models: ['single'], order: 11 },
-    { id: 'mFrameKit', name: 'Mフレームスターターキット 3', price: 143000, models: ['single'], order: 12 },
-    { id: 'mClip50', name: 'Mクリップ：50', price: 4000, models: ['single'], order: 13 },
-    { id: 'mClip100', name: 'Mクリップ：100', price: 6000, models: ['single'], order: 14 },
-    { id: 'multiCode', name: 'マルチコード装置2 1H', price: 87000, models: ['single'], order: 15 },
+    { id: 'sockFrameSet', name: '単頭機用 タジマ靴下枠セット ゲージ付き', price: 23000, models: ['single'], order: 10, excludeModelIds: ['TMBP2-XC'] },
+    { id: 'sockFrameSetMarusiki', name: '単頭機用 丸正式靴下枠セット ゲージ付き', price: 39000, models: ['single'], order: 11, excludeModelIds: ['TMBP2-XC'] },
+    { id: 'mFrameKit', name: 'Mフレームスターターキット 3', price: 143000, models: ['single'], order: 12, excludeModelIds: ['TMBP2-XC'] },
+    { id: 'mClip50', name: 'Mクリップ：50', price: 4000, models: ['single'], order: 13, excludeModelIds: ['TMBP2-XC'] },
+    { id: 'mClip100', name: 'Mクリップ：100', price: 6000, models: ['single'], order: 14, excludeModelIds: ['TMBP2-XC'] },
+    { id: 'multiCode', name: 'マルチコード装置2 1H', price: 87000, models: ['single'], order: 15, excludeModelIds: ['TMBP2-XC'] },
     { id: 'anshinSupport5y', name: '安心定額サポート（5年間）', price: 180000, models: ['single'], order: 16, group: 'support' },
   ];
 
@@ -1366,7 +1372,9 @@
 
     // モデルキーを対応表に寄せる
     let mk = 'SINGLE';
-    if(cat === 'few'){
+    if(cat === 'single' && modelId === 'TMBP2-XC'){
+      mk = 'TMBP2-XC';
+    } else if(cat === 'few'){
       if(modelId === 'TMEZ-K') mk = 'TMEZ-KC';
       else if(modelId === 'TMAR-K') mk = 'TMAR-KC';
       else if(modelId === 'TFMX-2C') mk = 'TFMX-2C';
@@ -1628,6 +1636,10 @@
     'TMBP2-S0601C': 2064000,
     'TMBP2-S1201C': 2128000,
     'TMBP2-S1501C': 2159000,
+
+    // 単頭機 TMBP2-XC系（550x600固定）
+    'TMBP2-XC1201C': 2860000,
+    'TMBP2-XC1501C': 2885000,
 
     // 少数頭機 TFMX-2C系
     'TFMX-2C0602': 3337000,
@@ -1891,10 +1903,11 @@
       h.textContent = '1頭';
       headsSel.appendChild(h);
 
-      // 単頭：360x500固定
+      // 単頭：モデル定義のfieldを使用（未定義の場合は360x500）
+      const singleField = m?.field || '360x500';
       const f = document.createElement('option');
-      f.value = '360x500';
-      f.textContent = '360×500';
+      f.value = singleField;
+      f.textContent = singleField.replace('x', '×');
       fieldSel.appendChild(f);
     }else{
       // 少数頭機
@@ -1974,14 +1987,15 @@
       // 例：TMBR2-S1501C(360x500)S
       const code = `${pad2(needles)}01`; // 針数+01
       const modelKey = `${modelId}${code}C`; // 見積番号に入れるモデル名
-      const full = `${modelId}${code}C(360x500)S`;
+      const singleField = m?.field || '360x500';
+      const full = `${modelId}${code}C(${singleField})S`;
       return { 
         category:'single', 
         modelKey, 
         full, 
         needles, 
         heads:1, 
-        field:'360x500',
+        field: singleField,
         displayName: m?.displayName || 'タジマ刺繍機'
       };
     }else{
@@ -2111,8 +2125,12 @@
       const price = getBFFPrice(m, bffType);
       const qty = parseInt(document.getElementById('opt_bff_qty')?.value || '1', 10);
       if (price > 0) {
+        const _bffOptModelId = document.getElementById('machineModel').value;
+        const _bffOptLabel = m.category === 'single'
+          ? (_bffOptModelId === 'TMBP2-XC' ? `原反枠（専用卓付き）${bffType}` : `原反枠（原反枠用卓付き）${bffType}`)
+          : `原反枠 ${bffType}`;
         options.push({
-          name: m.category === 'single' ? `原反枠（原反枠用卓付き）${bffType}` : `原反枠 ${bffType}`,
+          name: _bffOptLabel,
           qty,
           unitPrice: price
         });
@@ -2170,19 +2188,25 @@
     }
     
     // 固定価格オプション（彩の場合はanshinSupport5yを除外）
+    const _fixedModelId = document.getElementById('machineModel')?.value || '';
     FIXED_OPTIONS.forEach(opt => {
       // 彩の場合、anshinSupport5yは既に上で120,000円で処理済みなのでスキップ
       if (m.category === 'sai' && opt.id === 'anshinSupport5y') {
         return;
       }
+      // excludeModelIds チェック
+      if (opt.excludeModelIds && opt.excludeModelIds.includes(_fixedModelId)) return;
       
       const el = document.getElementById(`opt_${opt.id}`);
       if (el && el.checked) {
         const qty = parseInt(document.getElementById(`opt_${opt.id}_qty`)?.value || '1', 10);
+        const unitPrice = (opt.priceByModelId && opt.priceByModelId[_fixedModelId])
+          ? opt.priceByModelId[_fixedModelId]
+          : opt.price;
         options.push({
           name: opt.name,
           qty,
-          unitPrice: opt.price,
+          unitPrice,
           group: opt.group
         });
       }
@@ -2281,6 +2305,10 @@ if (tiEl && tiEl.checked) {
 
   function getBFFPrice(machine, bffType) {
     if (machine.category === 'single') {
+      const modelId = document.getElementById('machineModel').value;
+      if (modelId === 'TMBP2-XC') {
+        return BFF_PRICES['TMBP2-XC'][bffType] || 0;
+      }
       return BFF_PRICES['SINGLE'][bffType] || 0;
     }
     const key = `${machine.heads}H-${machine.field === '450x360' ? '360' : '500'}`;
@@ -2618,6 +2646,8 @@ function addTradeInOption(container) {
   function addFixedOptionById(container, optId, machine) {
     const opt = FIXED_OPTIONS.find(o => o.id === optId);
     if (opt && opt.models.includes(machine.category)) {
+      const _excludeModelId = document.getElementById('machineModel')?.value || '';
+      if (opt.excludeModelIds && opt.excludeModelIds.includes(_excludeModelId)) return;
       addFixedOption(container, opt);
     }
   }
@@ -2673,7 +2703,10 @@ function addTradeInOption(container) {
     }
     
     const price = getBFFPrice(machine, defaultType);
-    const labelText = machine.category === 'single' ? '原反枠（原反枠用卓付き）' : '原反枠';
+    const _bffModelId = document.getElementById('machineModel').value;
+    const labelText = machine.category === 'single'
+      ? (_bffModelId === 'TMBP2-XC' ? '原反枠（専用卓付き）' : '原反枠（原反枠用卓付き）')
+      : '原反枠';
     
     div.innerHTML = `
       <label class="switch">
@@ -2728,6 +2761,10 @@ function addTradeInOption(container) {
   }
 
   function addFixedOption(container, opt) {
+    const _fixModelId = document.getElementById('machineModel')?.value || '';
+    const _fixPrice = (opt.priceByModelId && opt.priceByModelId[_fixModelId])
+      ? opt.priceByModelId[_fixModelId]
+      : opt.price;
     const div = document.createElement('div');
     div.className = 'opt-row off';
     div.id = `row_${opt.id}`;
@@ -2737,7 +2774,7 @@ function addTradeInOption(container) {
         <input type="checkbox" id="opt_${opt.id}" onchange="toggleOption('${opt.id}')">
         <span class="slider"></span>
       </label>
-      <div class="opt-label">${opt.name} <span style="color:#666; font-size:12px;">${opt.price.toLocaleString()}</span></div>
+      <div class="opt-label">${opt.name} <span style="color:#666; font-size:12px;">${_fixPrice.toLocaleString()}</span></div>
       <input type="number" id="opt_${opt.id}_qty" class="opt-qty" min="1" step="1" value="1" oninput="applyAndRender()" />
     `;
     
