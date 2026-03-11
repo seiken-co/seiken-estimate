@@ -3261,7 +3261,7 @@ function addTradeInOption(container) {
       tbody.appendChild(tr);
     });
 
-    const tax = Math.round(subtotal * TAX_RATE);
+    const tax = Math.floor(subtotal * TAX_RATE);
     const total = subtotal + tax;
 
     {
