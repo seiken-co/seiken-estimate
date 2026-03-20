@@ -3509,5 +3509,46 @@ updateOptionsList();
     applyAndRender();
   });
 </script>
+
+<script>
+// ===== 展示会DBからの顧客情報自動入力 =====
+(function() {
+  function getParam(name) {
+    return decodeURIComponent(new URLSearchParams(window.location.search).get(name) || '');
+  }
+  function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el && val) {
+      el.value = val;
+      el.dispatchEvent(new Event('input'));
+    }
+  }
+  window.addEventListener('DOMContentLoaded', function() {
+    const company = getParam('company');
+    const postal  = getParam('postal');
+    const address = getParam('address');
+
+    if (company) setVal('toBase', company);
+
+    if (postal) {
+      setVal('zip', postal);
+      setTimeout(function() {
+        if (typeof lookupZip === 'function') lookupZip();
+        if (address) setTimeout(function() { setVal('addr2', address); }, 800);
+      }, 300);
+    } else if (address) {
+      setVal('addr2', address);
+    }
+
+    if (company || postal || address) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0f6e56;color:#fff;text-align:center;padding:10px;font-size:13px;z-index:9999;font-family:sans-serif;';
+      banner.textContent = '✓ 展示会来場者情報を自動入力しました。内容をご確認ください。';
+      document.body.prepend(banner);
+      setTimeout(function() { banner.style.transition='opacity 0.5s'; banner.style.opacity='0'; setTimeout(function(){banner.style.display='none';},500); }, 4000);
+    }
+  });
+})();
+</script>
 </body>
 </html>
