@@ -3523,6 +3523,25 @@ updateOptionsList();
       el.dispatchEvent(new Event('input'));
     }
   }
+  function extractAddr2(fullAddr) {
+    // 都道府県・市区町村・町名をlookupZipが入力した後の残りを抽出
+    const pref = document.getElementById('pref')?.value || '';
+    const city = document.getElementById('city')?.value || '';
+    const town = document.getElementById('town')?.value || '';
+    let remainder = fullAddr;
+    // 町名まで含めて削除（最長一致で削除）
+    const matched = [pref, city, town].filter(Boolean).join('');
+    if (matched && fullAddr.includes(matched)) {
+      remainder = fullAddr.substring(fullAddr.indexOf(matched) + matched.length).trim();
+    } else if (town && fullAddr.includes(town)) {
+      remainder = fullAddr.substring(fullAddr.indexOf(town) + town.length).trim();
+    } else if (city && fullAddr.includes(city)) {
+      remainder = fullAddr.substring(fullAddr.indexOf(city) + city.length).trim();
+    } else if (pref && fullAddr.includes(pref)) {
+      remainder = fullAddr.substring(fullAddr.indexOf(pref) + pref.length).trim();
+    }
+    return remainder || fullAddr;
+  }
   window.addEventListener('DOMContentLoaded', function() {
     const company = getParam('company');
     const postal  = getParam('postal');
@@ -3532,12 +3551,32 @@ updateOptionsList();
 
     if (postal) {
       setVal('zip', postal);
+      // lookupZipで都道府県・市区町村・町名を自動入力
       setTimeout(function() {
-        if (typeof lookupZip === 'function') lookupZip();
-        if (address) setTimeout(function() { setVal('addr2', address); }, 800);
+        if (typeof lookupZip === 'function') {
+          lookupZip();
+          // lookupZip完了後に番地だけ入力
+          setTimeout(function() {
+            if (address) {
+              const addr2 = extractAddr2(address);
+              setVal('addr2', addr2);
+            }
+          }, 1200);
+        } else if (address) {
+          setVal('addr2', address);
+        }
       }, 300);
     } else if (address) {
-      setVal('addr2', address);
+      // 郵便番号なし：住所を都道府県〜番地に分けてパース
+      const m = address.match(/^(.*?[都道府県])(.*?[市区町村郡])(.*?[町丁目]|\d)(.*)$/);
+      if (m) {
+        setVal('pref',  m[1]);
+        setVal('city',  m[2]);
+        setVal('town',  m[3]);
+        setVal('addr2', m[4].trim());
+      } else {
+        setVal('addr2', address);
+      }
     }
 
     if (company || postal || address) {
