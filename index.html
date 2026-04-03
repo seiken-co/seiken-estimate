@@ -1553,43 +1553,43 @@
   const DG_SOFTWARE = [
     { id:'WRITER_PLUS', name:'Writer Plus（彩 付属）', price:0, optionsEnabled:false, fontsEnabled:false, lanRule:'WP' },
     { id:'EXPRESS', name:'DG17 EXPRESS', price:175000, optionsEnabled:false, fontsEnabled:false, lanRule:'DG' },
-    { id:'COMPOSER', name:'DG16 COMPOSER', price:308000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
-    { id:'CREATOR', name:'DG16 CREATOR', price:451000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
-    { id:'ILLUSTRATOR_EXTREME', name:'DG16 ILLUSTRATOR EXTREME', price:615000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
-    { id:'ARTIST_PLUS', name:'DG16 ARTIST PLUS', price:801000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
-    { id:'MAESTRO', name:'DG16 MAESTRO', price:1081000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
-    { id:'DG_S', name:'DG-S', price:215000, optionsEnabled:false, fontsEnabled:false, lanRule:'DG' }
+    { id:'COMPOSER', name:'DG17 COMPOSER', price:382000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
+    { id:'CREATOR', name:'DG17 CREATOR', price:651000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
+    { id:'ILLUSTRATOR_EXTREME', name:'DG17 ILLUSTRATOR EXTREME', price:777000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
+    { id:'ARTIST_PLUS', name:'DG17 ARTIST PLUS', price:1029000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
+    { id:'MAESTRO', name:'DG16 MAESTRO', price:1406000, optionsEnabled:true,  fontsEnabled:true,  lanRule:'DG' },
+    { id:'DG_S', name:'DG-S', price:302000, optionsEnabled:false, fontsEnabled:false, lanRule:'DG' }
   ];
 
   // minGrade は「このグレード以上」で選択可（DG-Sは判定対象外なので入れない）
   const DG_OPTIONS = [
-    { id:'ELEMENT', name:'エレメント', price:57000, minGrade:'CREATOR' },
-    { id:'EVERYTHING_SEQUIN_PACK', name:'エブリシングシークインパック', price:299000, minGrade:'CREATOR' },
-    { id:'BEADS_PACK', name:'ビーズパック', price:437000, minGrade:'CREATOR' },
-    { id:'PHOTO_CREATOR', name:'フォトクリエーター', price:121000, minGrade:'ILLUSTRATOR_EXTREME' },
-    { id:'CHENILLE', name:'シェニール', price:156000, minGrade:'CREATOR' },
-    { id:'DIRECT_MACHINE_HOLDER', name:'ダイレクトマシンホルダー', price:42000, minGrade:'COMPOSER' },
-    { id:'CHENILLE_TUCKING', name:'シェニールタッキング', price:63000, minGrade:'COMPOSER' },
-    { id:'HEAD_GROUP', name:'ヘッドグループ（刺繍機ヘッド選択）', price:137000, minGrade:'ILLUSTRATOR_EXTREME' }
+    { id:'ELEMENT', name:'エレメント', price:73000, minGrade:'CREATOR' },
+    { id:'EVERYTHING_SEQUIN_PACK', name:'エブリシングシークインパック', price:399000, minGrade:'CREATOR' },
+    { id:'BEADS_PACK', name:'ビーズパック', price:585000, minGrade:'CREATOR' },
+    { id:'PHOTO_CREATOR', name:'フォトクリエーター', price:157000, minGrade:'ILLUSTRATOR_EXTREME' },
+    { id:'CHENILLE', name:'シュニール', price:204000, minGrade:'CREATOR' },
+    { id:'DIRECT_MACHINE_HOLDER', name:'ダイレクトマシンホルダー', price:51000, minGrade:'COMPOSER' },
+    { id:'CHENILLE_LETTERING', name:'シュニールレタリング', price:78000, minGrade:'COMPOSER' },
+    { id:'HEAD_GROUP', name:'ヘッドグループ（刺繍機ヘッド選択）', price:178000, minGrade:'ILLUSTRATOR_EXTREME' }
   ];
 
   const DG_FONTS = [
-    { id:'FONT_1', name:'フォント1（日本語以外）', price:38000, minGrade:'COMPOSER' },
-    { id:'SEQUIN_FONT_PACK', name:'シークインフォントパック', price:72000, minGrade:'COMPOSER' },
-    { id:'MONOGRAM_FONT_PACK', name:'モノグラムフォントパック', price:72000, minGrade:'COMPOSER' },
-    { id:'PLATINUM_FONT_PACK', name:'プラチナムフォントパック', price:180000, minGrade:'COMPOSER' },
-    { id:'FONT_MEDLEY', name:'フォントメドレー', price:72000, minGrade:'COMPOSER' },
-    { id:'SYMPHONY_1_FONT_PACK', name:'シンフォニー1 フォントパック', price:46000, minGrade:'COMPOSER' },
+    { id:'FONT_1', name:'フォント1（日本語以外）', price:46000, minGrade:'COMPOSER' },
+    { id:'SEQUIN_FONT_PACK', name:'シークインフォントパック', price:92000, minGrade:'COMPOSER' },
+    { id:'MONOGRAM_FONT_PACK', name:'モノグラムフォントパック', price:92000, minGrade:'COMPOSER' },
+    { id:'PLATINUM_FONT_PACK', name:'プラチナムフォントパック', price:237000, minGrade:'COMPOSER' },
+    { id:'FONT_MEDLEY', name:'フォントメドレー', price:92000, minGrade:'COMPOSER' },
+    { id:'SYMPHONY_1_FONT_PACK', name:'シンフォニー1 フォントパック', price:55000, minGrade:'COMPOSER' },
     { id:'NONAKA_FONT', name:'野中フォント', price:72000, minGrade:'COMPOSER' },
-    { id:'TAJIMA_JP_FONT_DGA', name:'タジマ日本語フォント：DG:A', price:68000, minGrade:'COMPOSER' },
-    { id:'TAJIMA_JP_FONT_DGB', name:'タジマ日本語フォント：DG:B', price:68000, minGrade:'COMPOSER' },
-    { id:'TAJIMA_JP_FONT_DGC', name:'タジマ日本語フォント：DG:C（A+Bセット）', price:123000, minGrade:'COMPOSER' },
-    { id:'TAJIMA_JP_FONT_PACK', name:'タジマ日本語フォントパック（現標準フォント）', price:50000, minGrade:'COMPOSER' }
+    { id:'TAJIMA_JP_FONT_DGA', name:'タジマ日本語フォント：DG:A', price:95000, minGrade:'COMPOSER' },
+    { id:'TAJIMA_JP_FONT_DGB', name:'タジマ日本語フォント：DG:B', price:95000, minGrade:'COMPOSER' },
+    { id:'TAJIMA_JP_FONT_DGC', name:'タジマ日本語フォント：DG:C（A+Bセット）', price:150000, minGrade:'COMPOSER' },
+    { id:'TAJIMA_JP_FONT_PACK', name:'タジマ日本語フォントパック（現標準フォント）', price:90000, minGrade:'COMPOSER' }
   ];
 
   const DG_LAN_LICENSES = {
-    DG: { id:'LAN_DG', name:'LAN刺繍機ライセンス（DG）', price:37000, note:'2〜10台目までの接続（追加）' },
-    WP: { id:'LAN_WRITER_PLUS', name:'LAN刺繍機ライセンス（ライタープラス）', price:18000, note:'2台目〜5台目の接続（追加）' }
+    DG: { id:'LAN_DG', name:'LAN刺繍機ライセンス（DG）', price:47000, note:'2〜10台目までの接続（追加）' },
+    WP: { id:'LAN_WRITER_PLUS', name:'LAN刺繍機ライセンス（ライタープラス）', price:22000, note:'2台目〜5台目の接続（追加）' }
   };
 
   // ====== 価格マスタ（完全版） ======
