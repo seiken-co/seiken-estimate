@@ -720,9 +720,10 @@
 <!-- === 追加：刺繍ソフト（DG） === -->
 <div class="card" id="cardDG">
 <div class="section-head"><div class="opt-head">刺繍ソフト（DG）</div><button class="btn mini" onclick="resetSoftwareSection()" type="button">刺繍ソフトをリセット</button></div>
-<div class="row">
+<details class="opt-panel" id="dgGradePanel" open style="margin-top:4px">
+<summary class="opt-head" style="margin:0">DGグレード選択 <span class="muted" id="dgGradeSummary"></span></summary>
+<div class="row" style="margin-top:10px">
 <div style="flex:1">
-<label>DGグレード</label>
 <select id="dgGrade" style="width:100%"></select>
 <div class="muted" style="margin-top:6px">※ DG-Sは別枠扱い（オプション／フォントは選択不可）</div>
 </div>
@@ -731,6 +732,7 @@
 <input class="qty" id="dgQty" min="1" oninput="applyAndRender()" step="1" type="number" value="1"/>
 </div>
 </div>
+</details>
 <details class="opt-panel" id="dgOptPanel" style="margin-top:14px">
 <summary class="opt-head" style="margin:0">DGオプション（グレード連動） <span class="muted" id="dgOptSummary"></span></summary>
 <div class="opt-row off" id="dgopt_row_DG_LESSON" style="margin-top:10px">
@@ -2689,8 +2691,8 @@ function addTradeInOption(container) {
       `;
       defaultType = 'BFF3+BFF8';
     } else if (machine.modelKey.startsWith('TFMX-2C')) {
-      // TFMX-2C：固定（hidden inputでopt_bff_typeを保持し、getSelectedOptions()が値を読めるようにする）
-      selectHTML = '<input type="hidden" id="opt_bff_type" value="BFF2+BFF6"><span style="margin-left:8px; font-size:12px; color:#666;">(BFF2+BFF6 固定)</span>';
+      // TFMX-2C：固定
+      selectHTML = '<span style="margin-left:8px; font-size:12px; color:#666;">(BFF2+BFF6 固定)</span>';
       defaultType = 'BFF2+BFF6';
     } else {
       // TMAR-KC / TMEZ-KC：3種類
@@ -2989,12 +2991,16 @@ function addTradeInOption(container) {
     const optS = document.getElementById('dgOptSummary');
     const fontS = document.getElementById('dgFontSummary');
     const lanS = document.getElementById('dgLanSummary');
+    const gradeS = document.getElementById('dgGradeSummary');
     if(!dg){
       if(optS) optS.textContent = '';
       if(fontS) fontS.textContent = '';
       if(lanS) lanS.textContent = '';
+      if(gradeS) gradeS.textContent = '未選択';
       return;
     }
+
+    if(gradeS) gradeS.textContent = dg.name + (dg.price ? `（${dg.price.toLocaleString()}円）` : '');
 
     const optItemsBase = dg.optionsEnabled ? getSelectedDGItems('dgopt', DG_OPTIONS.filter(it => isGradeAtLeast(dg.id, it.minGrade))) : [];
     const lessonItem = dg.optionsEnabled ? getSelectedDGLessonItem() : null;
@@ -3015,12 +3021,14 @@ function addTradeInOption(container) {
     if(sel){
       sel.addEventListener('change', ()=>{
         renderDGLists();
+        updateDGSummary();
         applyAndRender();
       });
     }
 
     // 初期は非表示
     renderDGLists();
+    updateDGSummary();
 
     // 各パネルを閉じておく（起動時クローズ運用）
     const optPanel = document.getElementById('dgOptPanel');
